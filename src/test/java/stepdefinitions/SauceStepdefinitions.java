@@ -9,18 +9,19 @@ import utilities.Driver;
 public class SauceStepdefinitions
 {
     SauceDemoPage sauceDemoPage = new SauceDemoPage();
+    String ilkUrunIsim;
 
     @Then("saucedemo username kutusuna {string} yazar")
-    public void saucedemo_username_kutusuna_yazar(String string) {
+    public void saucedemo_username_kutusuna_yazar(String kullaniciUsername) {
 
-        sauceDemoPage.userName.sendKeys("standard_user");
+        sauceDemoPage.userName.sendKeys(kullaniciUsername);
 
     }
 
     @Then("saucedemo password kutusuna {string} yazar")
-    public void saucedemo_password_kutusuna_yazar(String string) {
+    public void saucedemo_password_kutusuna_yazar(String kullaniciPassword) {
 
-        sauceDemoPage.password.sendKeys("secret_sauce");
+        sauceDemoPage.password.sendKeys(kullaniciPassword);
 
     }
 
@@ -33,7 +34,7 @@ public class SauceStepdefinitions
     @Then("ilk urunun ismini kaydeder ve bu urunun sayfasina gider")
     public void ilk_urunun_ismini_kaydeder_ve_bu_urunun_sayfasina_gider() {
 
-        String ilkUrunIsim = sauceDemoPage.ilkUrunIsim.getText();
+        ilkUrunIsim = sauceDemoPage.ilkUrunIsim.getText();
         sauceDemoPage.ilkUrunIsim.click();
 
 
@@ -56,9 +57,9 @@ public class SauceStepdefinitions
     @Then("sectigi urunun basarili olarak sepete eklendigini test eder")
     public void sectigi_urunun_basarili_olarak_sepete_eklendigini_test_eder() {
 
-        String expectedUrun = "Sauce Labs Backpack";
+
         String actualUrun = sauceDemoPage.eklenenUrun.getText();
-        Assert.assertEquals(expectedUrun,actualUrun);
+        Assert.assertEquals(ilkUrunIsim,actualUrun);
     }
 }
 

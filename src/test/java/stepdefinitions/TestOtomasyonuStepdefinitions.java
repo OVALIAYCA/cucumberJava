@@ -112,4 +112,14 @@ public class TestOtomasyonuStepdefinitions
     }
 
 
+    @When("email olarak listede verilen {string} girer")
+    public void emailOlarakListedeVerilenGirer(String verilenEmail) {
+
+        testOtomasyonuPage.emailKutusu.sendKeys(verilenEmail);
+    }
+
+    @And("password olarak listede verilen {string} girer")
+    public void passwordOlarakListedeVerilenGirer(String verilenPassword) {
+        testOtomasyonuPage.passwordKutusu.sendKeys(verilenPassword);
+    }
 }

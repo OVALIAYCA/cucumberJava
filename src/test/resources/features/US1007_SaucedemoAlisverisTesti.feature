@@ -1,7 +1,9 @@
 
-@wip
+
 Feature: US1007 Kullanicinin alisveris sepetine ekledigi urun testi
-  Scenario:
+
+  Scenario:TC13
+
     Given kullanici "sauceUrl" anasayfaya gider
     And 2 saniye bekler
     Then saucedemo username kutusuna "standard_user" yazar

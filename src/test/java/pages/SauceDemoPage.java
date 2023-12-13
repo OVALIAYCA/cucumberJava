@@ -15,7 +15,6 @@ public class SauceDemoPage
     @FindBy (id = "user-name")
     public WebElement userName;
 
-
     @FindBy(id = "password")
     public WebElement password;
 
