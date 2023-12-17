@@ -1,3 +1,4 @@
+@P1
 Feature: US1002 Kullanıcı parametre ile verdiği ürünü aratabilmeli
 
   Scenario: TC04_Kullanıcı java arattığında sonuç bulamamalı
@@ -7,7 +8,7 @@ Feature: US1002 Kullanıcı parametre ile verdiği ürünü aratabilmeli
     And 2 saniye bekler
     Then sayfayi kapatir
 
-  @ilk
+
   Scenario: TC05_Kullanıcı cucumber arattığında sonuç bulamamalı
     Given kullanici "toUrl" anasayfaya gider
     Then arama kutusuna "cucumber" yazarak enter tusuna basar

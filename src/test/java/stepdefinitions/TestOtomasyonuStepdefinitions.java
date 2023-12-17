@@ -4,17 +4,27 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Assert;
 import org.openqa.selenium.Keys;
-import pages.FacebookPage;
 import pages.TestOtomasyonuPage;
 import utilities.ConfigReader;
 import utilities.Driver;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TestOtomasyonuStepdefinitions
 {
     TestOtomasyonuPage testOtomasyonuPage = new TestOtomasyonuPage();
     //class seviyesinde oluşturduk, tekrar çağırabilmek için.
+
+    Sheet sayfa2;
+    int actualStokMiktari;
 
     @Given("kullanici testotomasyonu anasayfaya gider")
     public void kullanici_testotomasyonu_anasayfaya_gider() {
@@ -121,5 +131,97 @@ public class TestOtomasyonuStepdefinitions
     @And("password olarak listede verilen {string} girer")
     public void passwordOlarakListedeVerilenGirer(String verilenPassword) {
         testOtomasyonuPage.passwordKutusu.sendKeys(verilenPassword);
+    }
+
+    @Then("stok excelindeki {string} daki urun miktarini bulur")
+    public void stokExcelindekiDakiUrunMiktariniBulur(String satirNo) {
+        String dosyaYolu = "src/test/resources/stok.xlsx";
+        Workbook workbook;
+        try {
+           FileInputStream fileInputStream = new FileInputStream(dosyaYolu);
+            workbook = new XSSFWorkbook(fileInputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        sayfa2 = workbook.getSheet("Sayfa2");
+        String urunIsmi = sayfa2.getRow(Integer.parseInt(satirNo)-1).getCell(0).toString();
+        //istenen satirdaki ürün ismini bu şekilde buluruz.
+
+        testOtomasyonuPage.aramaKutusu.sendKeys(urunIsmi,Keys.ENTER);
+        actualStokMiktari = testOtomasyonuPage.bulunanUrunElementleriList.size();
+
+    }
+
+    @And("stok miktarinin {string} da verilen stok miktarindan fazla oldugunu test eder")
+    public void stokMiktarininDaVerilenStokMiktarindanFazlaOldugunuTestEder(String verilenSatir) {
+
+        String dosyaYolu = "src/test/resources/stok.xlsx";
+        Workbook workbook;
+        try {
+            FileInputStream fileInputStream = new FileInputStream(dosyaYolu);
+            workbook = new XSSFWorkbook(fileInputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        sayfa2 = workbook.getSheet("Sayfa2");
+        String minStokMiktariStr = sayfa2.getRow(Integer.parseInt(verilenSatir)-1)
+                                   .getCell(1).toString();
+        int minStokMiktari = (int) Double.parseDouble(minStokMiktariStr);
+
+        Assert.assertTrue(actualStokMiktari>=minStokMiktari);
+
+
+
+    }
+
+    @Then("stok excelindeki tum urunleri aratip, min stok miktarinda urun olanlari listeler")
+    public void stokExcelindekiTumUrunleriAratipMinStokMiktarindaUrunOlanlariListeler() {
+
+        String dosyaYolu = "src/test/resources/stok.xlsx";
+        Workbook workbook;
+        try {
+            FileInputStream fileInputStream = new FileInputStream(dosyaYolu);
+            workbook = new XSSFWorkbook(fileInputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        sayfa2 = workbook.getSheet("Sayfa2");
+
+        int stokExceliSonSatirNo = sayfa2.getLastRowNum();
+
+        String satirdakiUrunIsmi;
+        int satirdakiUrunMinStok;
+        int arananUrunUygulamadaBulunanSonucSayisi;
+        List<String> yeterliStokOlanlarListesi = new ArrayList<>();
+        List<String> yeterliStokOlmayanlarListesi = new ArrayList<>();
+
+        for (int i = 1; i <= stokExceliSonSatirNo; i++) {
+
+            satirdakiUrunIsmi = sayfa2
+                    .getRow(i)
+                    .getCell(0)
+                    .toString();
+
+            satirdakiUrunMinStok = (int) Double.parseDouble(sayfa2
+                    .getRow(i)
+                    .getCell(1)
+                    .toString());
+
+            testOtomasyonuPage.aramaKutusu.sendKeys(satirdakiUrunIsmi + Keys.ENTER);
+            arananUrunUygulamadaBulunanSonucSayisi = testOtomasyonuPage.bulunanUrunElementleriList.size();
+
+            if (arananUrunUygulamadaBulunanSonucSayisi >= satirdakiUrunMinStok) {
+                yeterliStokOlanlarListesi.add(satirdakiUrunIsmi);
+            } else {
+                yeterliStokOlmayanlarListesi.add(satirdakiUrunIsmi);
+            }
+
+        }
+
+        System.out.println("Yeterli stok olan urunler : " + yeterliStokOlanlarListesi);
+        System.out.println("Yeterli stok OLMAYAN urunler : " + yeterliStokOlmayanlarListesi);
     }
 }

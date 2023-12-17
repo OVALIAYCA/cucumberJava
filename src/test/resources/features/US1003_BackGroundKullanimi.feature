@@ -1,5 +1,5 @@
 
-
+@P2
 Feature: US1003 kullanici bastaki ortak adimlari tek seferde yazabilmeli
 
 Background: baslangictaki ortak adimlar buraya yazilabilir
